@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from utils import get_client
 from .forms import RegisterForm, LoginForm
+import hashlib
 
 client = None
 db = None
@@ -53,28 +54,37 @@ def index(request, username=None):
     return render(request, 'home/home.html', {"username": None})
 
 
+def add_user_to_session(request, userObj):
+    request.session['username'] = userObj["username"]
+    request.session['unityid'] = userObj["unityid"]
+    request.session['fname'] = userObj["fname"]
+    request.session['lname'] = userObj["lname"]
+    request.session['email'] = userObj["email"]
+    request.session['phone'] = userObj["phone"]
+
+
 def register(request):
-    intializeDB()
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
+            password = form.cleaned_data["password1"]
+            intializeDB()
+            # check whether username is unique
+            if (userDB.find_one({"username": form.cleaned_data["username"]})):
+                print('UserName Already Exists, please try different Username')
+                return render(request, 'user/register.html', {"form": form})
+
             userObj = {
                 "username": form.cleaned_data["username"],
                 "unityid": form.cleaned_data["unityid"],
                 "fname": form.cleaned_data["first_name"],
                 "lname": form.cleaned_data["last_name"],
                 "email": form.cleaned_data["email"],
-                "password": form.cleaned_data["password1"],
-                "phone": form.cleaned_data["phone_number"],
-                "rides": []
+                "password": hashlib.sha256(password.encode()).hexdigest(),
+                "phone": form.cleaned_data["phone_number"]
             }
             userDB.insert_one(userObj)
-            request.session['username'] = userObj["username"]
-            request.session['unityid'] = userObj["unityid"]
-            request.session['fname'] = userObj["fname"]
-            request.session['lname'] = userObj["lname"]
-            request.session['email'] = userObj["email"]
-            request.session['phone'] = userObj["phone"]
+            add_user_to_session(request=request, userObj=userObj)
             return redirect(index, username=request.session["username"])
         else:
             print(form.errors.as_data())
@@ -106,7 +116,7 @@ def login(request):
                 passw = form.cleaned_data["password"]
                 user = userDB.find_one({"username": username})
 
-                if user and user["password"] == form.cleaned_data["password"]:
+                if user and user["password"] == hashlib.sha256(form.cleaned_data["password"].encode()).hexdigest():
                     request.session["username"] = username
                     request.session['unityid'] = user["unityid"]
                     request.session['fname'] = user["fname"]
@@ -124,27 +134,153 @@ def my_rides(request):
     if not request.session.has_key('username'):
         request.session['alert'] = "Please login to create a ride."
         return redirect('index')
-    all_routes = list(routesDB.find())
-    user_list = list(userDB.find())
-    final_user, processed = list(), list()
-    for user in user_list:
-        if request.session["username"] == user['username']:
-            final_user = user
-    user_routes = final_user['rides']
-    for route in all_routes:
-        for i in range(len(user_routes)):
-            if user_routes[i] == route['_id']:
-                route['id'] = route['_id']
-                processed.append(route)
-
-    return render(request, 'user/myride.html', {"username": request.session['username'], "rides": processed})
+    processed = list(ridesDB.find({"owner": request.session["username"]}))
+    rides = []
+    for iter in processed:
+        iter['id'] = iter['_id']
+        rides.append(iter)
+    return render(request, 'user/myride.html', {"username": request.session['username'], "rides": rides})
 
 
 def delete_ride(request, ride_id):
     intializeDB()
+    print(ride_id)
     user = userDB.find_one({"username": request.session['username']})
-    if user is None:
-        pass
-    routesDB.delete_one({"_id": ride_id})
-    return redirect("/myrides")
+    ride = ridesDB.find_one({"_id": ride_id})
 
+    # only owner can delete ride
+    if ride is not None and ride["owner"] == request.session["username"]:
+        ridesDB.delete_one({"_id": ride_id})
+    return redirect("/ride_status")
+
+
+def approve_rides(request, ride_id):
+    if not request.session.has_key('username'):
+        request.session['alert'] = "Please login to approve rides."
+        return redirect('index')
+    intializeDB()
+    ride = ridesDB.find_one({"_id": ride_id})
+    return render(request, "user/approve_rides.html", {"username": request.session['username'], "space": ride['availability'], "requested_users": ride['requested_users'], "approved_users": ride['confirmed_users'], "ride_id": ride_id})
+
+
+def approve_user(request, ride_id, user_id):
+    if not request.session.has_key('username'):
+        request.session['alert'] = "Please login to approve rides."
+        return redirect('index')
+    intializeDB()
+    ride = ridesDB.find_one({"_id": ride_id})
+    ride['requested_users'].remove(user_id)
+    ride['confirmed_users'].append(user_id)
+    ride['availability'] -= 1
+    ridesDB.replace_one({"_id": ride_id}, ride)
+    return redirect("/ride_status")
+
+
+def requested_rides(request):
+    if not request.session.has_key('username'):
+        request.session['alert'] = "Please login to create a ride."
+        return redirect('index')
+    intializeDB()
+    username = request.session["username"]
+    pipeline = [
+        {
+            "$match": {
+                "$or": [
+                    {"requested_users": username},
+                    {"confirmed_users": username}
+                ]
+            }
+        },
+        {
+            "$project": {
+                "_id": 1,
+                "purpose": 1,
+                "spoint": 1,
+                "destination": 1,
+                "requested_users": 1,
+                "confirmed_users": 1,
+                "date": 1,
+                "hour": 1,
+                "minute": 1,
+                "ampm": 1,
+                "availability": 1,
+                "max_size": 1,
+                "found_in_requested": {
+                    "$cond": {
+                        "if": {"$in": [username, "$requested_users"]},
+                        "then": True,
+                        "else": False
+                    }
+                },
+                "found_in_confirmed": {
+                    "$cond": {
+                        "if": {"$in": [username, "$confirmed_users"]},
+                        "then": True,
+                        "else": False
+                    }
+                }
+            }
+        }
+    ]
+    pipeline2 = [
+        {
+            "$match": {
+                "owner": username,  # Filter by the rides owned by the user
+                # Only get rides with pending requests
+                "requested_users": {"$exists": True, "$not": {"$size": 0}}
+            }
+        },
+        {
+            "$project": {
+                "_id": 1,
+                "id": "$_id",
+                "purpose": 1,
+                "spoint": 1,
+                "destination": 1,
+                "requested_users": 1,
+                "date": 1,
+                "hour": 1,
+                "minute": 1,
+                "ampm": 1,
+                "availability": 1,
+                "max_size": 1  # Only return the requested users
+            }
+        }
+    ]
+
+    pipeline3 = [
+        {
+            "$match": {
+                "$or": [
+                    {"owner": username},
+                    {"confirmed_users": username}
+                ]
+            }
+        },
+        {
+            "$project": {
+                "_id": 1,
+                "id": "$_id",
+                "spoint": 1,
+                "destination": 1,
+                "ride_type": 1,
+                "date": 1,
+                "hour": 1,
+                "minute": 1,
+                "availability": 1,
+                "max_size": 1,
+                "ampm": 1,
+                "owner": 1,
+                "confirmed_users": 1
+            }
+        }
+    ]
+    received_requests = list(ridesDB.aggregate(pipeline2))
+    user_rides = list(ridesDB.aggregate(pipeline3))
+
+    results = list(ridesDB.aggregate(pipeline))
+    requested = [doc for doc in results if doc['found_in_requested']]
+    confirmed = [doc for doc in results if doc['found_in_confirmed']]
+    print(user_rides)
+
+    return render(request, 'user/ride_status.html', {"username": request.session["username"], "requested": requested, "confirmed": confirmed, "received_requests": received_requests, "user_rides": user_rides})

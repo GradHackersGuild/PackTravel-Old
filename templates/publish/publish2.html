@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>New PackTravel Route</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyAlTEtvRzc8n19pvk4-h-DpdrbkybY2ePY"></script>
+
+    <style>
+        :root {
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --secondary: #F8FAFC;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --border-color: #E2E8F0;
+            --focus-ring: #EEF2FF;
+            --error: #EF4444;
+            --success: #10B981;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+        }
+
+        .form-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-title::before {
+            content: "🚗";
+            font-size: 2rem;
+        }
+
+        .form-section {
+            background: var(--secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--focus-ring);
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366F1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            padding-right: 2.5rem;
+        }
+
+        .time-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .location-input-wrapper {
+            position: relative;
+        }
+
+        .location-input-wrapper::before {
+            content: "📍";
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            z-index: 1;
+        }
+
+        .location-input {
+            padding-left: 3rem !important;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 1.5rem;
+            }
+
+            .time-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'nav.html' %}
+
+    <div class="form-container">
+        <div class="card">
+            <h1 class="form-title">Create New Route</h1>
+
+            <form action="/create_route/" method="POST">
+                {% csrf_token %}
+
+                <div class="form-section">
+                    <h2 class="section-title">Route Information</h2>
+
+                    <div class="mb-4 location-input-wrapper">
+                        <label class="form-label">Starting Point</label>
+                        <input name="spoint" required class="form-control location-input" type="text" id="spoint"
+                            placeholder="Enter your starting location">
+                    </div>
+
+                    <div class="mb-4 location-input-wrapper">
+                        <label class="form-label">Destination</label>
+                        <input name="destination" required class="form-control location-input" type="text"
+                            id="destination" placeholder="Enter your destination">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Purpose</label>
+                        <input name="purpose" required class="form-control" type="text"
+                            placeholder="What's the purpose of your trip?">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Journey Details</h2>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Date</label>
+                            <input class="form-control" name="date" type="date" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Transport Type</label>
+                            <select name="type" required class="form-control form-select">
+                                <option value="" disabled selected>Select transport type</option>
+                                <option>Bus</option>
+                                <option>Cab</option>
+                                <option>Personal</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Departure Time</h2>
+                    <div class="time-inputs">
+                        <div>
+                            <label class="form-label">Hour</label>
+                            <select name="hour" required class="form-control form-select">
+                                {% for i in '123456789101112'|make_list %}
+                                <option>{{i}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Minute</label>
+                            <select name="minute" required class="form-control form-select">
+                                <option>00</option>
+                                {% for i in '05101520253035404550'|make_list %}
+                                <option>{{i}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">AM/PM</label>
+                            <select name="ampm" required class="form-control form-select">
+                                <option>AM</option>
+                                <option>PM</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Additional Details</h2>
+
+                    <div class="mb-4">
+                        <label class="form-label">Capacity (excluding ride owner)</label>
+                        <select name="capacity" required class="form-control form-select">
+                            {% for i in '12345'|make_list %}
+                            <option value="{{i}}">{{i}} passenger{% if i != '1' %}s{% endif %}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Additional Information</label>
+                        <textarea rows="3" name="details" required class="form-control"
+                            placeholder="Share any additional details about the route, requirements, or preferences"></textarea>
+                    </div>
+                </div>
+
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn-submit">
+                        Create Route
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Google Places Autocomplete for starting point
+        $(document).ready(function () {
+            var autocomplete1 = new google.maps.places.Autocomplete(
+                document.getElementById('spoint'), {
+                types: ['geocode'],
+            }
+            );
+
+            // Google Places Autocomplete for destination
+            var autocomplete2 = new google.maps.places.Autocomplete(
+                document.getElementById('destination'), {
+                types: ['geocode'],
+            }
+            );
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Approve Riders</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body>
+    {% include 'nav.html' %}
+    <div
+      class="card mx-auto shadow-2-strong bg-white rounded"
+      style="width: 60%; margin: 50px; padding: 50px"
+    >
+      <div>
+        <h3>Requested Users</h3>
+        {% for request in requested_users %}
+        <form
+          action="{% url 'approve_user' ride_id=ride_id user_id=request %}"
+          method="post"
+        >
+          {% csrf_token %}
+          <h4>{{request}}</h4>
+          {% if space > 0%}
+          <button type="submit">Add User</button>
+          {% else %}
+          <button disabled type="submit">Add User</button>
+          {% endif %}
+        </form>
+        {%endfor%}
+      </div>
+      <div class="row">
+        <h3>Approved Users</h3>
+        {% for request in approved_users %}
+        <h4>{{request}}</h4>
+        {%endfor%}
+      </div>
+    </div>
+  </body>
+</html>

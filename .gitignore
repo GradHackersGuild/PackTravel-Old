@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 config.ini
+config.txt
 PackTravel/__pycache__/
 *.py[cod]
 *$py.class
@@ -140,3 +141,4 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+templates/publish/route_old.html

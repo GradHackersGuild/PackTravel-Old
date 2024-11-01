@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .sidebar {
+      background-color: #fff;
+      min-height: 100vh;
+      border-right: 1px solid #dee2e6;
+      padding-top: 20px;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 10px 20px;
+      color: #333;
+      text-decoration: none;
+    }
+
+    .sidebar a:hover {
+      background-color: #e9ecef;
+    }
+
+    .content {
+      padding: 100px;
+    }
+
+    .card {
+      margin-bottom: 20px;
+      border: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-custom {
+      background-color: #de5555;
+      color: white;
+    }
+
+    .btn-custom:hover {
+      background-color: #b84343;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  {% include 'nav.html' %}
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-md-3 sidebar">
+        <h4 class="p-3">Menu</h4>
+        <a href="#" onclick="showSection('sentRequests')">Sent Requests</a>
+        <a href="#" onclick="showSection('receivedRequests')">Received Requests</a>
+        <a href="#" onclick="showSection('myRides')">My Rides</a>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-md-9 content">
+        <!-- Sent Requests -->
+        <div id="sentRequests" class="section" style="display:none;">
+          <h3>Sent Requests</h3>
+          {% for ride in requested %}
+          <div class="card p-3">
+            <h5>{{ ride.spoint }} to {{ ride.destination }}</h5>
+            <p>{{ ride.type }}</p>
+            <p>Date: {{ ride.date }}</p>
+            <p>Starting Time: {{ ride.hour }}:{{ ride.minute }} {{ ride.ampm }}</p>
+            <p>Availability: {{ ride.availability }} out of {{ ride.max_size }}</p>
+            <a href="/cancel_ride/{{ride.id}}" class="btn btn-custom">Cancel</a>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Received Requests -->
+        <div id="receivedRequests" class="section" style="display:none;">
+          <h3>Received Requests</h3>
+          {% for ride in received_requests %}
+          <!-- {% for user in ride.requested_users %} -->
+          <div class="card p-3">
+            <h5>Rider - {{ user }}</h5>
+            <p>{{ ride.spoint }} to {{ ride.destination }}</p>
+            <p>Date: {{ ride.date }}</p>
+            <p>Starting Time: {{ ride.hour }}:{{ ride.minute }} {{ ride.ampm }}</p>
+            <p>Availability: {{ ride.availability }} out of {{ ride.max_size }}</p>
+            <a href="/approve_user/{{ride.id}}/{{user}}" class="btn btn-custom">Accept</a>
+            <a href="/reject_request/{{ride.id}}/{{user}}" class="btn btn-custom mt-2">Reject</a>
+          </div>
+          {% endfor %}
+          {% endfor %}
+        </div>
+
+
+        <div id="myRides" class="section" style="display:none;">
+          <h3>My Rides</h3>
+          {% for ride in user_rides %}
+          <div class="card p-3">
+            <h5>{{ ride.spoint }} to {{ ride.destination }}</h5>
+            <p>{{ ride.ride_type }}</p>
+            <p>Date: {{ ride.date }}</p>
+            <p>Starting Time: {{ ride.hour }}:{{ ride.minute }} {{ ride.ampm }}</p>
+            <p>Availability: {{ ride.availability }} out of {{ ride.max_size }}</p>
+            {% if request.session.username != ride.owner %}
+            <p>Owner: {{ride.owner}}</p>
+            {% else %}
+            <p>Confirmed Riders:
+              {% if ride.confirmed_users %}
+              {% for user in ride.confirmed_users %}
+              {{ user }}{% if not loop.last %}, {% endif %}
+              {% endfor %}
+              {% else %}
+              No confirmed riders.
+              {% endif %}
+            </p>
+            {% endif %}
+            {% if request.session.username == ride.owner %}
+            <a href="/delete_ride/{{ ride.id }}" class="btn btn-custom">Delete Ride</a>
+            {% elif request.session.username in ride.confirmed_users %}
+            <a href="/cancel_accepted_ride/{{ ride.id }}/{{ request.session.username }}" class="btn btn-custom">Cancel
+              Request</a>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- JavaScript to Toggle Sections -->
+  <script>
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(section => section.style.display = 'none');
+      document.getElementById(sectionId).style.display = 'block';
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      showSection('sentRequests');
+    });
+  </script>
+
+</body>
+
+</html>

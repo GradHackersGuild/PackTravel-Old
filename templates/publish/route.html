@@ -13,6 +13,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyAlTEtvRzc8n19pvk4-h-DpdrbkybY2ePY"></script>
 
 </head>
 <style>
@@ -21,7 +23,9 @@
     /* box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); */
     /* background: #D3D3D3; */
 }
-
+.modal { z-index: 1001 !important;} 
+.modal-backdrop {z-index: 1000 !important;}
+.pac-container {z-index: 1055 !important;}
 </style>
 <script>
   window.onload = function(e){ 
@@ -36,6 +40,9 @@ function selectRoute(id) {
 <body style="background-color: #3A3B3C;">
 
     {% include 'nav.html' %}
+
+
+    
     <div class="card mx-auto shadow-2-strong bg-white rounded" style="width: 60%; margin: 50px; padding: 50px;">
         <h3>{{ride.name}} </h3>
         <hr>
@@ -46,10 +53,22 @@ function selectRoute(id) {
                 <td>Destination</td>
                 <td>{{ride.destination}}</td>
               </tr>
+              <tr>
+                <td>Date</td>
+                <td>{{ride.date}}</td>
+              </tr>
+              <tr>
+                <td>Reach Time</td>
+                <td>{{ride.hour}}:{{ride.minute}} {{ride.ampm}}</td>
+              </tr>
+              <tr>
+                <td>Details</td>
+                <td>{{ride.details}}</td>
+              </tr>
             </tbody>
           </table>
           <br>
-        <h5>Available Routes:</h5>
+        <h5>Routes:</h5>
           {% if routes %}
           <table class="table table-hover">
             <thead>
@@ -57,6 +76,7 @@ function selectRoute(id) {
                 <th scope="col">Select</th>
                 <th scope="col">Type</th>
                 <th scope="col">Start Point</th>
+                
                 <th scope="col">Start Time</th>
                 <th scope="col">Duration</th>
                 <th scope="col">Number of users</th>
@@ -65,7 +85,10 @@ function selectRoute(id) {
             </thead>
             <tbody>
           {% for route in routes %}
+          
+          
             <tr>
+              
               <th scope="row"><div class="input-group">
                 <form method="POST" action="/select_route/" id="myForm{{route.id}}">
                   {% csrf_token %}
@@ -84,19 +107,19 @@ function selectRoute(id) {
               </div>
             </th>
               <td>
+                <a href="/route_page/{{ route.id }}">
                 {% if ride.type == "Bus" %}
                 <img height="15px" width="15px" src="{% static 'bus.svg'%}">
                 {% elif ride.type == "Cab" %}
                 <img  height="15px" width="15px" src="{% static 'car.svg'%}">
                 {% endif %}
-                {{ route.type }}
-              </td>
-              <td>{{ route.s_point }}</td>
+                {{ route.type }}</a></td>
+              <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#myModal">{{ route.spoint }}</button></td>
               <td>{{ route.hour }}:{{ route.minute }} {{ route.ampm }}</td>
               <td>{{ route.duration }} minutes</td>
               <td>{{ route.users|length }}</td>
               <td>{{ route.details }}</td>
-
+            </a>
             </tr>
             <div class="modal" id="myModal">
               <div class="modal-dialog">
@@ -111,7 +134,7 @@ function selectRoute(id) {
                   <!-- Modal body -->
                   <div class="modal-body" action="http://maps.google.com/maps">
                     <form action="http://maps.google.com/maps" method="get" target="_blank">
-                      <input type="hidden" name="saddr"  value="{{route.s_point}}" />
+                      <input type="hidden" name="saddr"  value="{{route.spoint}}" />
                       <input type="hidden" name="daddr" value= "{{ride.destination}}"/>
                       <input type="submit" class="btn text-center" style="background-color: #D22B2B; border-color: #D22B2B; color: white;" value="Get directions" />
                    </form>
@@ -126,126 +149,134 @@ function selectRoute(id) {
             </table>
           {% endif %}
 
-   <button class="btn" onclick="window.location.href='/publish/'">
-     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" width="50px" height="50px">
-      <g id="surface369321732">
-      <path style=" stroke:none;fill-rule:nonzero;fill:#D22B2B;fill-opacity:1;" d="M 25 2 C 12.316406 2 2 12.316406 2 25 C 2 37.683594 12.316406 48 25 48 C 37.683594 48 48 37.683594 48 25 C 48 12.316406 37.683594 2 25 2 Z M 37 26 L 26 26 L 26 37 L 24 37 L 24 26 L 13 26 L 13 24 L 24 24 L 24 13 L 26 13 L 26 24 L 37 24 Z M 37 26 "/>
-      </g>
-     </svg>&nbsp;
-     <h5>
-       Add a Route
-     </h5>
-   </button>
+
+   <button class="btn" data-bs-toggle="modal" data-bs-target="#routeModal"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" width="50px" height="50px">
+    <g id="surface369321732">
+    <path style=" stroke:none;fill-rule:nonzero;fill:#D22B2B;fill-opacity:1;" d="M 25 2 C 12.316406 2 2 12.316406 2 25 C 2 37.683594 12.316406 48 25 48 C 37.683594 48 48 37.683594 48 25 C 48 12.316406 37.683594 2 25 2 Z M 37 26 L 26 26 L 26 37 L 24 37 L 24 26 L 13 26 L 13 24 L 24 24 L 24 13 L 26 13 L 26 24 L 37 24 Z M 37 26 "/>
+    </g>
+    </svg>&nbsp; <h5>Add a Route</h5></button>
     </div>
 <!-- Modal -->
-<!--<div class="modal fade" id="routeModal" tabindex="-1" aria-labelledby="modallabel" aria-hidden="true">-->
-<!--    <div class="modal-dialog">-->
-<!--    <div class="modal-content">-->
-<!--        <div class="modal-header">-->
-<!--        <h5 class="modal-title" id="modallabel">Route Information</h5>-->
-<!--        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--        </div>-->
-<!--        <div class="modal-body">-->
-<!--            <form action="/add_route/" method="POST" class="form-group">-->
-<!--                {% csrf_token %}-->
-<!--                <div class="form-group">-->
-<!--                                <span class="form-label">Select a type of route:</span>-->
-<!--                                <select name="type" required class="form-control">-->
-<!--                                    <option value="Bus">Bus</option>-->
-<!--                                    <option value="Cab">Cab</option>-->
-<!--                                    <option value="Personal">Personal</option>-->
-<!--                                </select>-->
-<!--                                <span class="select-arrow"></span>-->
-<!--                            </div>-->
-<!--                            <br>-->
-<!--                <div class="form-group">-->
-<!--                    <span class="form-label">Start Point</span>-->
-<!--                    <input name="spoint" required class="form-control" type="text" placeholder="Enter a starting location for the route">-->
-<!--                </div>-->
-<!--                <br>-->
-<!--                Enter satrting time for the route:-->
-<!--            <div class="row"-->
-<!--                <div class="col-sm-7">-->
-<!--                    <div class="row">-->
-<!--                        -->
-<!--                        <div class="col-sm-4">-->
-<!--                            <div class="form-group">-->
-<!--                                <span class="form-label">Hour</span>-->
-<!--                                <select name="hour" required class="form-control">-->
-<!--                                    <option>1</option>-->
-<!--                                    <option>2</option>-->
-<!--                                    <option>3</option>-->
-<!--                                    <option>4</option>-->
-<!--                                    <option>5</option>-->
-<!--                                    <option>6</option>-->
-<!--                                    <option>7</option>-->
-<!--                                    <option>8</option>-->
-<!--                                    <option>9</option>-->
-<!--                                    <option>10</option>-->
-<!--                                    <option>11</option>-->
-<!--                                    <option>12</option>-->
-<!--                                </select>-->
-<!--                                <span class="select-arrow"></span>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        <div class="col-sm-4">-->
-<!--                            <div class="form-group">-->
-<!--                                <span class="form-label">Min</span>-->
-<!--                                <select name="minute" required class="form-control">-->
-<!--                                    <option>00</option>-->
-<!--                                    <option>05</option>-->
-<!--                                    <option>10</option>-->
-<!--                                    <option>15</option>-->
-<!--                                    <option>20</option>-->
-<!--                                    <option>25</option>-->
-<!--                                    <option>30</option>-->
-<!--                                    <option>35</option>-->
-<!--                                    <option>40</option>-->
-<!--                                    <option>45</option>-->
-<!--                                    <option>50</option>-->
-<!--                                    <option>55</option>-->
-<!--                                </select>-->
-<!--                                <span class="select-arrow"></span>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        <div class="col-sm-4">-->
-<!--                            <div class="form-group">-->
-<!--                                <span class="form-label">AM/PM</span>-->
-<!--                                <select name="ampm" class="form-control">-->
-<!--                                    <option>AM</option>-->
-<!--                                    <option>PM</option>-->
-<!--                                </select>-->
-<!--                                <span class="select-arrow"></span>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--               &lt;!&ndash; </div> &ndash;&gt;-->
-<!--               <br>-->
-<!--               <div class="form-group">-->
-<!--                <span class="form-label">Duration in Minutes</span>-->
-<!--                <input type="number" name="duration" required class="form-control" type="text" placeholder="Enter ride duration in minutes">-->
-<!--            </div>-->
-<!--            <br>-->
-<!--               <div class="form-group">-->
-<!--               <span class="form-label">Route Details</span>-->
-<!--               <textarea rows="2" name="details" required class="form-control" type="text" placeholder="Enter ride details"></textarea>-->
-<!--           </div>-->
-<!--           <input type="hidden"  name="ride" value="{{ ride }}">-->
-<!--            </div>-->
-<!--            <div class="modal-footer">-->
-<!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-<!--                <button type="submit" style="background-color: #D22B2B; border-color: #D22B2B;" class="btn btn-primary">Validate Route</button>-->
-<!--                </div>-->
-<!--             </form>-->
-<!--        &lt;!&ndash; </div> &ndash;&gt;-->
-<!--        -->
-<!--    </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-    
-
+<div class="modal fade" id="routeModal" tabindex="-1" aria-labelledby="modallabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="modallabel">Route Information</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="/add_route/" method="POST" class="form-group">
+                {% csrf_token %}
+                <div class="form-group">
+                                <span class="form-label">Select a type of route:</span>
+                                <select name="type" required class="form-control">
+                                    <option value="Bus">Bus</option>
+                                    <option value="Cab">Cab</option>
+                                    <option value="Personal">Personal</option>
+                                </select>
+                                <span class="select-arrow"></span>
+                            </div>
+                            <br>
+                <div class="form-group">
+                    <span class="form-label">Start Point</span>
+                    <input name="spoint" required class="form-control" type="text" id="route" placeholder="Enter a starting location for the route:">
+                    <script>
+                      var searchInput = 'route';
+                      $(document).ready(function () {
+                       var autocomplete;
+                       autocomplete = new google.maps.places.Autocomplete((document.getElementById(searchInput)), {
+                        types: ['geocode'],
+                        /*componentRestrictions: {
+                         country: "USA"
+                        }*/
+                       });
+                        
+                       google.maps.event.addListener(autocomplete, 'place_changed', function () {
+                        var near_place = autocomplete.getPlace();
+                       });
+                      });
+                      </script>
+                </div>
+                <br>
+                Enter satrting time for the route:
+            <div class="row"
+                <div class="col-sm-7">
+                    <div class="row">
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <span class="form-label">Hour</span>
+                                <select name="hour" required class="form-control">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                    <option>9</option>
+                                    <option>10</option>
+                                    <option>11</option>
+                                    <option>12</option>
+                                </select>
+                                <span class="select-arrow"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <span class="form-label">Min</span>
+                                <select name="minute" required class="form-control">
+                                    <option>00</option>
+                                    <option>05</option>
+                                    <option>10</option>
+                                    <option>15</option>
+                                    <option>20</option>
+                                    <option>25</option>
+                                    <option>30</option>
+                                    <option>35</option>
+                                    <option>40</option>
+                                    <option>45</option>
+                                    <option>50</option>
+                                    <option>55</option>
+                                </select>
+                                <span class="select-arrow"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <span class="form-label">AM/PM</span>
+                                <select name="ampm" class="form-control">
+                                    <option>AM</option>
+                                    <option>PM</option>
+                                </select>
+                                <span class="select-arrow"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               <!-- </div> -->
+               <br>
+               <div class="form-group">
+                <span class="form-label">Duration in Minutes</span>
+                <input type="number" name="duration" required class="form-control" type="text" placeholder="Enter ride duration in minutes">
+            </div>
+            <br>
+               <div class="form-group">
+               <span class="form-label">Route Details</span>
+               <textarea rows="2" name="details" required class="form-control" type="text" placeholder="Enter ride details"></textarea>
+           </div>
+           <input type="hidden"  name="ride" value="{{ ride }}">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" style="background-color: #D22B2B; border-color: #D22B2B;" class="btn btn-primary">Validate Route</button>
+                </div>
+             </form>
+        <!-- </div> -->
+        
+    </div>
+    </div>
+</div>
 </body>
-
 </html>
