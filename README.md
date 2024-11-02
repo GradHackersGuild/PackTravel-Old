@@ -130,6 +130,7 @@ Create MongoDB User to Connect to a dB
 Start the server
 
 ```bash
+  python manage.py migrate
   python manage.py runserver
 ```
 
