@@ -1,17 +1,55 @@
-cff-version: 1.2.0
-message: "Hello!! If you use this software, please cite it using the metadata from this file"
-title: "PackTravel"
+abstract: '<h2><strong>Pilot Release - v1.1</strong></h2>
+
+  <h3><strong>New Features:</strong></h3>
+
+  <p><strong>1. Google Map Integration:</strong>
+
+  - Users can now auto fill exact start and destination locations with the help of
+  googleMapAPI''s autocomplete.
+
+  - Users can now view their ride route from start to destination with embedded GMap
+  on clicking view Ride Details.</p>
+
+  <p><strong>2. Joining a ride:</strong>
+
+  - Users can now request ride owner to add them to the created ride.
+
+  - Ride owners can view requested users and approve their request.
+
+  - Availability and Capacity of ride fields added to keep track of number of users
+  that can be added to a ride.</p>
+
+  <p><strong>3. Secure Password Storage:</strong>
+
+  - Users passwords are hashed and stored in the database.</p>
+
+
+
+  <h3><strong>Bug Fixes:</strong></h3>
+
+  <p><strong>1. Ride Deletion Issue:</strong> Fixed an issue where ride owners were
+  unable to delete the rides they created. Ride owners can now successfully delete
+  any rides they''ve created as intended.</p>
+
+  <p><strong>2. Unique Identifier:</strong> source point was being used as the _id
+  for searching rides. This was fixed by using a UUID as the _id as the identifier
+  for a ride.</p>
+
+  <p><strong>3. Unique Username Constraint:</strong> Added ride owner unique username
+  constraint and simplified db querying.</p>'
 authors:
-  - family-names: Chavan
-    given-names: Ameya
-  - family-names: Waghela
-    given-names: Amisha
-  - family-names: Das
-    given-names: Aoishi
-  - family-names: Shah
-    given-names: Kunal
-  - family-names: Mohan
-    given-names: Swarnamalya
-version: "1.2"
-date-released: "10/09/2022"
-doi: 10.5281/zenodo.7178601
+- family-names: Varatharajan
+  given-names: Varun
+- family-names: Pundlik
+  given-names: Makarand
+- family-names: Varghese
+  given-names: Michelle
+cff-version: 1.2.0
+date-released: '2024-10-30'
+doi: 10.5281/zenodo.14020211
+license:
+- cc-by-4.0
+repository-code: https://github.com/GradHackersGuild/PackTravel-Old/tree/v1.1
+title: PackTravel by GradHackersGuild
+type: software
+version: v1.1

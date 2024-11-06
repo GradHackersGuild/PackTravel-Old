@@ -84,7 +84,7 @@
     <div class="col-sm-6" >
         <div class="card" style="color: black; margin: 10px;">
         <div class="card-body">
-          <h5 class="card-title">{{ ride.s_point }} to {{ ride.destination }}</h5>
+          <h5 class="card-title">{{ ride.spoint }} to {{ ride.destination }}</h5>
           <p class="card-text">{{ ride.details }}</p>
           <table class="table table-hover">
             <tbody>
@@ -103,6 +103,7 @@
             </tbody>
           </table>
           <a href="/delete_ride/{{ ride.id }}" style="background-color: #D22B2B; border-color: #D22B2B;" class="btn btn-dark">Delete</a>
+          <a href="/approve_rides/{{ ride.id }}" style="background-color: #D22B2B; border-color: #D22B2B;" class="btn btn-dark">Approve Co-Riders</a>
         </div>
       </div>
     </div>

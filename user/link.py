@@ -1,3 +1,27 @@
+"""
+MIT License
+
+Copyright (c) 2022 Makarand Pundlik
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 from selenium import webdriver
 import time
 from selenium.webdriver.common.keys import Keys
@@ -5,7 +29,7 @@ import chromedriver_autoinstaller
 
 # f : Cab or Bus (1= Cab, 2=Bus)
 def get_link(source,destination,date_tr,month_tr,time_tr,f):
-
+    """Generates a route link from Google Maps based on the given source, destination, travel date, time, and mode of transport."""
     chromedriver_autoinstaller.install()
     chrome_options = webdriver.ChromeOptions()
     browser = webdriver.Chrome(options=chrome_options)

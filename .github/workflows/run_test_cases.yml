@@ -1,0 +1,32 @@
+name: run_test_cases
+
+on: [pull_request, push]
+
+jobs:
+  test_python:
+    runs-on: ubuntu-20.04 
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10.2' 
+      
+      - run: pip install virtualenv
+      
+      - run: |
+          python -m virtualenv newenv
+          source newenv/bin/activate
+
+          pip install django django-allauth pymongo setuptools --upgrade
+          pip install -r requirements.txt
+
+          python manage.py test
+          pip install coverage
+          coverage run manage.py test
+          coverage xml
+      
+      - name: Upload coverage to Codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }} 
+        run: bash <(curl -s https://codecov.io/bash) -f coverage.xml

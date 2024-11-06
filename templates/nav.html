@@ -1,87 +1,149 @@
 <!DOCTYPE html>{% load static %}
 <html lang="en" dir="ltr">
-   <head>
-      <meta charset="utf-8">
-      <title>PackTravel</title>
-      <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-      <style>
-        body {
-          margin:0;
-          padding:0;
-        }
-        .navbar {
-          background-color:#000;
-        }
-        nav {
-          height:60px;
-        }
-        .navbar-nav {
-          margin:auto;
-        }
-        .nav-link {
-          margin:5px 15px;
-          color:#fff;
-        }
-        .nav-link:hover {
-          color:#D22B2B;
-        }
-        .box {
-          width:100%;
-          height:20px;
-          background-color:#000;
-          position:relative;
-        }
-        .box-1 {
-          width:50%;
-          background-color:#fff;
-          height:100%;
-          border-radius:0px 25px 0px 0px;
-          border-top:3px solid yellow;
-          border-right:3px solid yellow;
-        }
-        .box-2 {
-          position:absolute;
-          background-color:#fff;
-          height:100%;
-          width:50%;
-          right:0;
-          top:0;
-          border-radius:25px 0px 0px 0px;
-          border-top:3px solid yellow;
-          border-left:3px solid yellow;
-        }
-        h1 {
-          margin-top:20px;
-        }
-        
 
-      </style>
-   </head>
-   <style>
-    svg {
-      height: 40px;
-      width: 40px;
-      fill: #D22B2B;
+<head>
+  <meta charset="utf-8">
+  <title>PackTravel</title>
+  <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
     }
-    .apply-font { 
-	font-family: Montserrat; 
-}
-   </style>
+
+    :root {
+      --text: #333;
+      /* Example text color */
+      --primary: #3498db;
+      /* Example primary color */
+      --primary-dark: #2980b9;
+      /* Darker shade for hover */
+    }
+
+    .navbar {
+      background-color: rgb(255, 255, 255);
+      justify-content: space-between;
+      display: flex;
+
+
+    }
+
+    nav {
+      height: 60px;
+    }
+
+    .navbar-nav {
+      display: flex;
+      justify-content: space-between;
+      padding-left: 40%;
+
+    }
+
+    .nav-link {
+      margin: 5px 15px;
+      color: rgb(0, 0, 0);
+    }
+
+    .nav-link:hover {
+      color: #2b8dd2;
+    }
+
+    .box {
+      width: 100%;
+      height: 20px;
+      background-color: rgb(255, 255, 255);
+      position: relative;
+    }
+
+    .box-1 {
+      width: 50%;
+      background-color: #fff;
+      height: 100%;
+      border-radius: 0px 25px 0px 0px;
+      border-top: 3px solid yellow;
+      border-right: 3px solid yellow;
+    }
+
+    .box-2 {
+      position: absolute;
+      background-color: #fff;
+      height: 100%;
+      width: 50%;
+      right: 0;
+      top: 0;
+      border-radius: 25px 0px 0px 0px;
+      border-top: 3px solid yellow;
+      border-left: 3px solid yellow;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.2rem 1.5rem;
+      border-radius: 9000px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+  </style>
+</head>
+<style>
+  svg {
+    height: 40px;
+    width: 40px;
+    fill: #D22B2B;
+  }
+
+  .apply-font {
+    font-family: Montserrat;
+  }
+</style>
+
 <body>
-  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar fixed-top navbar-expand-lg ">
     <a class="navbar-brand" href="/index/">
-      &nbsp;&nbsp; <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-      viewBox="0 0 476.402 476.402" style="enable-background:new 0 0 476.402 476.402;" xml:space="preserve">
-   <g>
-     <path d="M278.6,296.323c-1.917-1.095-4.36-0.431-5.458,1.487c-0.097,0.17-8.178,14.182-19.079,24.698
+      &nbsp;&nbsp; <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 476.402 476.402"
+        style="enable-background:new 0 0 476.402 476.402;" xml:space="preserve">
+        <g>
+          <path
+            d="M278.6,296.323c-1.917-1.095-4.36-0.431-5.458,1.487c-0.097,0.17-8.178,14.182-19.079,24.698
        c-0.591-12.02-6.347-23.203-6.66-23.804c-0.688-1.316-2.048-2.144-3.534-2.148c-0.004,0-0.008,0-0.012,0
        c-1.48,0-2.841,0.818-3.534,2.127c-0.474,0.894-9.545,18.252-11.288,38.276c-9.559-20.073-13.157-50.939-13.2-51.316
        c-0.249-2.195-2.228-3.766-4.424-3.525c-2.195,0.249-3.773,2.229-3.525,4.424c0.224,1.979,5.67,48.699,22.352,66.958
        c0.776,0.849,1.855,1.302,2.955,1.302c0.566,0,1.137-0.12,1.675-0.368c1.582-0.729,2.509-2.399,2.293-4.128
        c-1.838-14.698,2.901-30.259,6.53-39.516c1.855,5.729,3.447,13.426,1.646,19.908c-0.452,1.626,0.165,3.361,1.543,4.337
-       c1.378,0.974,3.22,0.981,4.604,0.012c15.789-11.045,28.089-32.363,28.605-33.266C281.184,299.864,280.518,297.42,278.6,296.323z"/>
-     <path d="M474.865,280.658l-45.542-35.617l16.232-2.949c1.278-0.232,2.434-1.006,3.003-2.173c0.935-1.919,0.234-4.126-1.475-5.186
+       c1.378,0.974,3.22,0.981,4.604,0.012c15.789-11.045,28.089-32.363,28.605-33.266C281.184,299.864,280.518,297.42,278.6,296.323z" />
+          <path d="M474.865,280.658l-45.542-35.617l16.232-2.949c1.278-0.232,2.434-1.006,3.003-2.173c0.935-1.919,0.234-4.126-1.475-5.186
        l-22.147-13.737c6.524-2.499,13.252-5.457,20.2-8.924c0.697-0.348,1.323-0.86,1.724-1.527c0.997-1.658,0.686-3.666-0.582-4.932
        c-15.174-15.162-46.428-31.295-70.653-42.426c7.738-1.565,16.772-4.708,23.118-11.012c0.675-0.671,1.138-1.555,1.225-2.503
        c0.173-1.89-0.955-3.561-2.638-4.161c-7.229-2.582-10.513-6.716-14.672-11.949c-6.727-8.466-15.098-19.001-42.732-25.672
@@ -185,44 +247,44 @@
        c2.012,0.376,4.031,0.672,6.057,0.887c-0.952,1.686-1.93,3.653-2.711,5.726c-0.325-0.498-0.643-1.007-0.949-1.54
        C174.683,143.724,173.898,141.978,173.295,140.406z M183.13,153.839c0.267-3.65,3.178-8.949,5.39-12.12
        c5.102-0.068,10.201-0.642,15.243-1.725c0.312,4.832-0.05,11.59-3.246,15.035c-1.771,1.908-4.392,2.644-8.022,2.238
-       C189.017,156.88,185.892,155.73,183.13,153.839z"/>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   <g>
-   </g>
-   </svg> &nbsp;&nbsp;<span class="apply-font">PackTravel</span>
+       C189.017,156.88,185.892,155.73,183.13,153.839z" />
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+        <g>
+        </g>
+      </svg> &nbsp;&nbsp;<span class="apply-font">PackTravel</span>
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
       <span class="navbar-toggler-icon"></span>
     </button>
-  
+
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item active">
@@ -234,32 +296,29 @@
         <li class="nav-item">
           <a class="nav-link apply-font" href="/publish/">Create a Ride</a>
         </li>
-        {% if  not request.session.username  %}
         <li class="nav-item">
-          <a class="nav-link apply-font" href="/login/">Login</a>
+          <a class="nav-link apply-font" href="/ride_status/">Ride Status</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link apply-font" href="/register/">Sign Up</a>
-        </li>
+
+        {% if request.session.username %}
+
+        <div class="nav-buttons ml-auto">
+          <button class="btn btn-ghost" onclick="location.href='/logout/'">Logout</button>
+          <button class="btn btn-primary" onclick="location.href='/ride_status/'">Hi, {{username }}</button>
+        </div>
+
+        {% else %}
+        <div class="nav-buttons ml-auto">
+          <button class="btn btn-ghost" onclick="location.href='/login/'">Login</button>
+          <button class="btn btn-primary " onclick="location.href='/register/'">Sign Up</button>
+        </div>
         {% endif %}
-        {% if  request.session.username  %}
-						<li class="nav-item">
 
-							<a class="nav-link apply-font" href="/logout/">
-								<span class="nav-text">Logout</span>
-							</a>
-						</li>
-                        <li class="nav-item">
-
-							<a class="nav-link apply-font" href="/myrides/">
-								<span class="nav-text">Hi, {{ username }}</span>
-							</a>
-						</li>
-						{% endif %}
       </ul>
     </div>
   </nav>
-<br>
-  
-   </body>
+  <br>
+
+</body>
+
 </html>

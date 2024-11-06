@@ -30,9 +30,9 @@ This section guides you through submitting a bug report. Following these guideli
 > **Note:** If you find a **Closed** issue that seems like it is the same thing that you're experiencing, open a new issue and include a link to the original issue in the body of your new one.
 #### Before Submitting A Bug Report
 
-* **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/amisha-w/PackTravel/issues).
+* **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/orgs/GradHackersGuild/projects/2/views/1)
 
-* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/amisha-w/PackTravel/issues/new). Be sure to include a **title and clear description**, as much relevant information as possible, and a **code sample** or an **executable test case** demonstrating the expected behavior that is not occurring.
+* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/GradHackersGuild/PackTravel-Old/issues/new). Be sure to include a **title and clear description**, as much relevant information as possible, and a **code sample** or an **executable test case** demonstrating the expected behavior that is not occurring.
 
 #### How Do I Submit the fixes for the Bug?
 
